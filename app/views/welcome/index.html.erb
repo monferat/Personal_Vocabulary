@@ -1,2 +1,10 @@
-<h1>Welcome</h1>
-<p>There will be redirection to login/signUp or smth else</p>
+<h3>Store words</h3>
+<h3>in</h3>
+<h1>your personal vocabulary</h1>
+
+<% if logged_in? %>
+  <%= link_to 'My profile', user_path(current_user) %>
+  <%= link_to 'Log out', logout_path, method: :delete %>
+<% else %>
+  <%= link_to 'Log in', login_path %> or <%= link_to 'Sign Up', signup_path %>
+<% end %>

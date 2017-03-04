@@ -1,6 +1,16 @@
 <% provide(:title, 'Sign up') %>
 <h1>Sign Up</h1>
 <%= form_for(@user, url: signup_path) do |f| %>
+
+  <% if @user.errors.any? %>
+    <h2><%= pluralize(@user.errors.count, 'error') %> prohibited this user from being saved:</h2>
+    <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
   <%= f.label :login %>
   <%= f.text_field :login %>
   <br />
@@ -23,3 +33,4 @@
 
   <%= f.submit 'Create my account' %>
 <% end %>
+<%= button_to 'Home', root_path, :method => 'get' %>
