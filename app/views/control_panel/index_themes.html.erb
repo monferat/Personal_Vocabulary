@@ -17,8 +17,17 @@
     <br>
   </div>
 
-  <h1>Add Theme</h1>
-
+  <div class="well">
+        <%= form_for Theme.new, url: themes_path, remote: true, :html => {:role=> 'form'} do |f| %>
+            <p>
+              <%= f.label :name, "New theme" %><br/>
+            <div class="form-group">
+              <%= f.text_field :name, class: 'form-control'%>
+            </div>
+            </p>
+            <p><%= f.submit "Add theme", class: 'btn btn-primary' %></p>
+        <% end %>
+  </div>
 
 </div>
 </body>

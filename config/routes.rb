@@ -5,9 +5,9 @@ Rails.application.routes.draw do
   resource :control_panel, only: [:index]
 
   get 'sessions/new'
-  get 'welcome/index_users'
+  get 'welcome/index'
 
-  root 'welcome#index_users'
+  root 'welcome#index'
 
   get '/signup', to: 'users#new'
   post '/signup', to: 'users#create'
@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   delete '/logout', to: 'sessions#destroy'
 
   resources :users
+  resources :themes, only: [:create, :destroy]
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

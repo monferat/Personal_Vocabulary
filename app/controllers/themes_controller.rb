@@ -13,22 +13,21 @@ class ThemesController < ApplicationController
   def destroy
     @theme.destroy
     respond_to do |format|
-      format.html { redirect_to admin_url, notice: 'Theme was successfully deleted.' }
+      format.html { redirect_to admin_themes_path, notice: 'Theme was successfully deleted.' }
       format.json { head :no_content }
     end
   end
 
   def new
-    @theme = Theme.new
   end
 
   def create
     @theme = Theme.new(theme_params)
-      if @theme.save
-        format.html { redirect_to admin_url }
-      else
-        format.html { render 'new' }
-      end
+    @theme.save
+    respond_to do |format|
+      format.html { redirect_to admin_themes_path }
+      format.js
+    end
   end
 
   private
