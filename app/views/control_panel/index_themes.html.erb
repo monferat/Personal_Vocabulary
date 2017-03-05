@@ -1,0 +1,24 @@
+<body>
+<div class="container">
+  <div class="blog-header">
+    <h1 class="blog-title">All themes</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-8 blog-main">
+      <% @themes.each do |theme| %>
+          <h3 class="blog-post-title">
+            <%= theme.name %>
+            <%= link_to 'Delete', theme, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-primary' %>
+          </h3>
+      <% end %>
+    </div>
+
+    <br>
+  </div>
+
+  <h1>Add Theme</h1>
+
+
+</div>
+</body>

@@ -1,0 +1,19 @@
+<body>
+<div class="container">
+  <div class="blog-header">
+    <h1 class="blog-title">All users</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-8 blog-main">
+      <% @users.each do |user| %>
+            <h3 class="blog-post-title"><%= user.name %>    <%= user.email %> </h3>
+            <%= link_to 'Delete', user, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-primary' %>
+      <% end %>
+    </div>
+
+    <br>
+  </div>
+
+</div>
+</body>

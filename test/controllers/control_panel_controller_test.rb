@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ControlPanelControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
+  test "should get index_users" do
     get control_panel_index_url
     assert_response :success
   end

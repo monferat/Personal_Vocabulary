@@ -3,11 +3,14 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index
-    @users = User.all
   end
 
   def show
-    @user = User.find(params[:id])
+    if current_user
+      set_user
+    else
+      redirect_to root_path
+    end
   end
 
   def edit
@@ -17,6 +20,11 @@ class UsersController < ApplicationController
   end
 
   def destroy
+    @user.destroy
+    respond_to do |format|
+      format.html { redirect_to admin_url, notice: 'User was successfully deleted.' }
+      format.json { head :no_content }
+    end
   end
 
   def new

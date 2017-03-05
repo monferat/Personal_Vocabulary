@@ -2,15 +2,12 @@ class ControlPanelController < ApplicationController
 
   http_basic_authenticate_with :name => ENV['CP_USER'], :password => ENV['CP_PASSWORD']
 
-  def index
+  def index_users
+    @users = User.all
   end
 
-  def new
+  def index_themes
+    @themes = Theme.all
   end
 
-  def create
-  end
-
-  def destroy
-  end
 end

@@ -1,12 +1,13 @@
 Rails.application.routes.draw do
 
-  get 'admin' => 'control_panel#index', :as => :admin
-  resource :control_panel, only: [:index, :new, :create, :destroy]
+  get 'admin/users' => 'control_panel#index_users', :as => :admin
+  get 'admin/themes' => 'control_panel#index_themes'
+  resource :control_panel, only: [:index]
 
   get 'sessions/new'
-  get 'welcome/index'
+  get 'welcome/index_users'
 
-  root 'welcome#index'
+  root 'welcome#index_users'
 
   get '/signup', to: 'users#new'
   post '/signup', to: 'users#create'
