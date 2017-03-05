@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  get 'sessions/new'
 
+  get 'admin' => 'control_panel#index', :as => :admin
+  resource :control_panel, only: [:index, :new, :create, :destroy]
+
+  get 'sessions/new'
   get 'welcome/index'
 
   root 'welcome#index'
