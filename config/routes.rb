@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  get 'admin/users' => 'control_panel#index_users', :as => :admin
+  get 'admin' => 'control_panel#index_users', :as => :admin
   get 'admin/themes' => 'control_panel#index_themes'
   resource :control_panel, only: [:index]
 
