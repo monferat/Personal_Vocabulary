@@ -6,9 +6,17 @@ class SessionsController < ApplicationController
     user = User.find_by(login: params[:session][:login])
     if user && user.authenticate(params[:session][:password])
       log_in user
-      redirect_to user
+      respond_to do |format|
+        format.html { redirect_to user }
+        msg = { status: 'ok', message: 'Success' }
+        format.json { render json: msg }
+      end
     else
-      render 'new'
+      respond_to do |format|
+        format.html { render 'new' }
+        msg = { status: :unauthorized, message: 'error' }
+        format.json { render json: msg }
+      end
     end
   end
 
