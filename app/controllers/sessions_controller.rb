@@ -3,11 +3,11 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(login: params[:session][:login])
-    if user && user.authenticate(params[:session][:password])
-      log_in user
+    @user = User.find_by_login(params[:login])
+    if @user && @user.authenticate(params[:password])
+      log_in @user
       respond_to do |format|
-        format.html { redirect_to user }
+        format.html { redirect_to @user }
         msg = { status: 'ok', message: 'Success' }
         format.json { render json: msg }
       end
@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    log_out
+    reset_session
     redirect_to root_url
   end
 end

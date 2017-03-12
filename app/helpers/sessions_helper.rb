@@ -12,7 +12,4 @@ module SessionsHelper
     !current_user.nil?
   end
 
-  def log_out
-    reset_session
-  end
 end

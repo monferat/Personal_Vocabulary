@@ -3,11 +3,11 @@
 
 <%= form_for(:session, url: login_path) do |f| %>
     <%= f.label :login %>
-    <%= f.text_field :login %>
+    <%= f.text_field :login, name: 'login'%>
     <br />
 
     <%= f.label :password %>
-    <%= f.password_field :password %>
+    <%= f.password_field :password, name: 'password' %>
     <br />
 
     <%= f.submit 'Log in' %>
