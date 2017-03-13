@@ -8,14 +8,14 @@ class SessionsController < ApplicationController
       log_in @user
       respond_to do |format|
         format.html { redirect_to @user }
-        msg = { status: 'ok', message: 'Success' }
-        format.json { render json: msg }
+        msg = { message: 'Success' }
+        format.json { render json: msg, status: :ok }
       end
     else
       respond_to do |format|
         format.html { render 'new' }
-        msg = { status: :unauthorized, message: 'error' }
-        format.json { render json: msg }
+        msg = { message: 'error' }
+        format.json { render json: msg, status: :unauthorized}
       end
     end
   end

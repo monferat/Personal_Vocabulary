@@ -38,7 +38,8 @@ class UsersController < ApplicationController
       if @user.save
         log_in @user
         format.html { redirect_to @user }
-        format.json { render :show, status: :created, location: @user }
+        msg = { message: 'Success' }
+        format.json { render json: msg, status: :created}
       else
         format.html { render 'new' }
         format.json { render json: @user.errors, status: :unprocessable_entity }
