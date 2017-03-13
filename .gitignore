@@ -21,3 +21,5 @@
 .idea/
 /config/database.yml
 /config/application.yml
+## Ignore Swagger JSON files.
+/public/apidocs/
