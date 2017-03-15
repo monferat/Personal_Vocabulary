@@ -38,8 +38,11 @@ gem 'bcrypt', '~> 3.1.11'
 
 gem 'rack-cors'
 
+gem 'rspec'
+
 # Swagger
 gem 'swagger-docs'
+gem 'rswag'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
