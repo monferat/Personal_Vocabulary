@@ -48,6 +48,13 @@ class UsersController < ApplicationController
 
   end
 
+  def check
+    email_found = User.where(email: params[:email]).count > 0
+    login_found = User.where(login: params[:login]).count > 0
+    message = (email_found || login_found) ? "true" : "false"
+    render json: { message: message }
+  end
+
   private
 
     def set_user
