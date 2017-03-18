@@ -38,20 +38,6 @@ describe 'My API' do
       produces 'application/json', 'application/xml'
       parameter name: :id, :in => :path, :type => :string
 
-      # response '200', 'user found' do
-      #   schema type: :object,
-      #          properties: {
-      #              id: { type: :integer },
-      #              login: { type: :string },
-      #              name: { type: :string },
-      #              email: { type: :string }
-      #          },
-      #          required: [ 'id', 'login', 'name', 'email']
-      #
-      #   let(:id) { User.create(login: 'Cclara', name: 'Cclara Oswald', email: 'osswald@mail.com', password: '123123', password_confirmation: '123123').id }
-      #   run_test!
-      # end
-
       response '404', 'user not found' do
         let(:id) { 'invalid' }
         run_test!
