@@ -25,8 +25,8 @@ class WordsController < ApplicationController
 
   def create
     @word = Word.new(word_params)
-    #@word.user = User.find_by_id(params[:user_id])
-    @word.user = current_user if current_user
+    @word.user = User.find_by_id(params[:user_id])
+    #@word.user = current_user if current_user
     @word.theme_id = params[:theme_id]
 
     respond_to do |format|
