@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   mount VocabularyAPI => '/'
+  mount GrapeSwaggerRails::Engine => '/swagger'
 
   get 'admin' => 'control_panel#index_users', :as => :admin
   get 'admin/themes' => 'control_panel#index_themes'

@@ -43,6 +43,8 @@ gem 'swagger-docs'
 
 # Grape
 gem 'grape'
+gem 'grape-swagger'
+gem 'grape-swagger-rails'
 
 gem 'hashie-forbidden_attributes'
 

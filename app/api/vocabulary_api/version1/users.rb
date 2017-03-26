@@ -1,9 +1,5 @@
 class VocabularyAPI::Version1::Users < Grape::API
 
-  before do
-
-  end
-
   #/api/v1/users
   resource :users do
 
@@ -23,10 +19,12 @@ class VocabularyAPI::Version1::Users < Grape::API
       user = User.new(params)
 
       if user.save
+        status :created
         # todo: create token
         #log_in user
         { message: 'Success', status: :created }
       else
+        status :unprocessable_entity
         { message: user.errors, status: :unprocessable_entity }
       end
     end
