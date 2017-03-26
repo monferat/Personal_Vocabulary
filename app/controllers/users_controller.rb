@@ -1,9 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-
-  def index
-  end
+#  before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def show
     if current_user
@@ -30,7 +27,8 @@ class UsersController < ApplicationController
   def new
     @user = User.new
   end
-
+=begin
+  # post /api/v1/users
   def create
     @user = User.new(user_params)
 
@@ -47,7 +45,7 @@ class UsersController < ApplicationController
     end
 
   end
-
+=end
   def check
     email_found = User.where(email: params[:email]).count > 0
     login_found = User.where(login: params[:login]).count > 0

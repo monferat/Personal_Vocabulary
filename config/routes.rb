@@ -1,14 +1,16 @@
 Rails.application.routes.draw do
 
+  mount VocabularyAPI => '/'
+
   get 'admin' => 'control_panel#index_users', :as => :admin
   get 'admin/themes' => 'control_panel#index_themes'
   resource :control_panel, only: [:index]
-
+=begin
   get 'sessions/new'
   get 'welcome/index'
-
+=end
   root 'welcome#index'
-
+=begin
   get '/signup', to: 'users#new'
   post '/signup', to: 'users#create'
 
@@ -21,7 +23,7 @@ Rails.application.routes.draw do
       get 'check'
     end
   end
-
+=end
   resources :themes, only: [:create, :destroy]
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
