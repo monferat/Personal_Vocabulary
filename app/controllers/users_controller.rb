@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
-
+=begin
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
+  #/api/v1/users/:id
   def show
     if current_user
       set_user
@@ -15,6 +16,7 @@ class UsersController < ApplicationController
 
   def update
   end
+=end
 
   def destroy
     @user.destroy
@@ -24,6 +26,7 @@ class UsersController < ApplicationController
     end
   end
 
+=begin
   def new
     @user = User.new
   end
@@ -63,5 +66,6 @@ class UsersController < ApplicationController
     def user_params
       params.permit(:login, :name, :email, :password, :password_confirmation)
     end
+=end
 
 end

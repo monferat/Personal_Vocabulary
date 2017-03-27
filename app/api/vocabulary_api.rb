@@ -6,10 +6,17 @@ class VocabularyAPI < Grape::API
   format :json
 
   before do
+    #allow CORS requests
     header['Access-Control-Allow-Origin'] = '*'
     header['Access-Control-Request-Method'] = '*'
   end
-
+=begin
+  helpers do
+    def authenticate!
+      error!('Unauthorized. Invalid or expired token.', 401) unless current_user
+    end
+  end
+=end
   mount VocabularyAPI::Version1
 
   add_swagger_documentation(
