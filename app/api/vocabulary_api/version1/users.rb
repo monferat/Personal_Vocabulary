@@ -1,9 +1,8 @@
 class VocabularyAPI::Version1::Users < Grape::API
 
-  #/api/v1/users
-  resource :users do
+  resource :registration do
 
-    #/api/v1/users/registration
+    #/api/v1/registration
 
     desc 'Create new user'
 
@@ -15,13 +14,13 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :password_confirmation, type: String
     end
 
-    post '/registration' do
+    post do
       @user = User.new(params)
 
       if @user.save
         status :created
         # todo: create token
-#        log_in user
+        #       log_in user
         { message: 'Success', status: :created }
       else
         status :unprocessable_entity
@@ -29,7 +28,39 @@ class VocabularyAPI::Version1::Users < Grape::API
       end
     end
 
-    ################################################################
+  end
+
+  #############################################################
+
+  #/api/v1/log_in
+
+  resource :log_in do
+
+    desc 'User log in'
+
+    params do
+      requires :login, type: String
+      requires :password, type: String
+    end
+
+    post do
+      @user = User.find_by_login(params[:login])
+      if @user && @user.authenticate(params[:password])
+        # todo: find by token
+        #       log_in @user
+        { message: 'Success', status: :ok }
+      else
+        status :unauthorized
+        { message: 'Error', status: :unauthorized }
+      end
+    end
+
+  end
+
+  ##############################################################
+
+  #/api/v1/users
+  resource :users do
 
     #/api/v1/users/check
 
@@ -46,25 +77,22 @@ class VocabularyAPI::Version1::Users < Grape::API
       (email_found || login_found) ? "true" : "false"
     end
 
-    ##############################################################
+    ################################################################
 
     #/api/v1/users/:id
-=begin
-    desc 'Show users`s page by id'
 
-    params do
-      requires :id, type: Integer
-    end
+    desc 'Get user by id'
 
     get '/:id' do
-      if current_user
-        set_user
-      else
-        status :unauthorized
-        { message: 'Unauthorized access', status: :unauthorized }
-      end
+#      authenticate!
+      set_user
+      {
+        name: @user.name,
+        login: @user.login,
+        email: @user.email
+      }
     end
-=end
+
   end
 
   private

@@ -10,13 +10,17 @@ class VocabularyAPI < Grape::API
     header['Access-Control-Allow-Origin'] = '*'
     header['Access-Control-Request-Method'] = '*'
   end
-=begin
+
   helpers do
+    def current_user
+      @current_user ||= User.find_by(id: session[:user_id])
+    end
+
     def authenticate!
       error!('Unauthorized. Invalid or expired token.', 401) unless current_user
     end
   end
-=end
+
   mount VocabularyAPI::Version1
 
   add_swagger_documentation(

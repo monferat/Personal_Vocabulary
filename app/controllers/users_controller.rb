@@ -31,7 +31,7 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
-  # post /api/v1/users/registration
+  # post /api/v1/registration
   def create
     @user = User.new(user_params)
 
