@@ -21,7 +21,7 @@ class VocabularyAPI::Version1::Users < Grape::API
       if user.save
         status :created
         # todo: create token
-        #log_in user
+#        log_in user
         { message: 'Success', status: :created }
       else
         status :unprocessable_entity
@@ -31,8 +31,60 @@ class VocabularyAPI::Version1::Users < Grape::API
 
     ##############################################################
 
+    #/api/v1/users/:id
+=begin
+    desc 'Show users`s page by id'
 
+    params do
+      requires :id, type: Integer
+    end
 
+    get '/:id' do
+      if current_user
+        set_user
+      else
+        status :unauthorized
+        { message: 'Unauthorized access', status: :unauthorized }
+      end
+    end
+=end
+    ################################################################
+
+    #/api/v1/users/check
+
+    desc 'Check if users with given parameters exists'
+
+    params do
+      requires :login, type: String
+      requires :email, type: String
+    end
+
+    get '/check' do
+      email_found = User.where(email: params[:email]).count > 0
+      login_found = User.where(login: params[:login]).count > 0
+      (email_found || login_found) ? "true" : "false"
+    end
+
+    #################################################################
+=begin
+    #/api/v1/users/:id
+
+    desc 'Delete user'
+
+    delete do
+      @user.destroy
+      head :no_content
+      { message: 'Success', status: :ok }
+    end
+=end
+  end
+
+  private
+
+  helpers do
+    def set_user
+      @user = User.find(params[:id])
+    end
   end
 
 end

@@ -2,7 +2,13 @@ class VocabularyAPI < Grape::API
 
   prefix :api
   version 'v1'
+  content_type :json, 'application/json; charset=UTF-8'
   format :json
+
+  before do
+    header['Access-Control-Allow-Origin'] = '*'
+    header['Access-Control-Request-Method'] = '*'
+  end
 
   mount VocabularyAPI::Version1
 

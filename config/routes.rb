@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   get 'sessions/new'
   get 'welcome/index'
 =end
-  root 'welcome#index'
+#  root 'welcome#index'
 =begin
   get '/signup', to: 'users#new'
   post '/signup', to: 'users#create'
@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     end
   end
 =end
+  resources :users, only: [:show, :edit, :update, :destroy]
   resources :themes, only: [:create, :destroy]
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
