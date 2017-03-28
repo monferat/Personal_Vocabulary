@@ -3,7 +3,13 @@ class WordsController < ApplicationController
   before_action :set_word, only: [:show, :edit, :update, :destroy]
 
   def index
-    @words = Word.all
+    page = params[:page_number]
+    if page
+      @words = Word.all[0..page.to_i]
+    else
+      @words = Word.all
+    end
+
   end
 
   def show
@@ -27,7 +33,7 @@ class WordsController < ApplicationController
     @word = Word.new(word_params)
     @word.user = User.find_by_id(params[:user_id])
     #@word.user = current_user if current_user
-    @word.theme_id = params[:theme_id]
+    @word.theme = Theme.find_by_name(params[:theme_name])
 
     respond_to do |format|
       if @word.save
@@ -60,6 +66,11 @@ class WordsController < ApplicationController
     else
       redirect_to root_path
     end
+  end
+
+  def wordscount
+    message = Word.all.size.to_s
+    render json: { count: message }
   end
 
   private
