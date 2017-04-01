@@ -11,16 +11,19 @@ class VocabularyAPI < Grape::API
     #allow CORS requests
     header['Access-Control-Allow-Origin'] = '*'
     header['Access-Control-Request-Method'] = '*'
+
     authenticate_for User
   end
 
-=begin
   helpers do
     def authenticate!
       error!('Unauthorized') unless current_user
     end
+
+    def create_token(user)
+      Knock::AuthToken.new(payload: { sub: user.id }).token
+    end
   end
-=end
 
   mount VocabularyAPI::Version1
 

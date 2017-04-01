@@ -15,18 +15,21 @@ class VocabularyAPI::Version1::Users < Grape::API
       @user = User.new(params)
       if @user.save
         status :created
-        # todo: create token
-        #       log_in user
-        { message: 'Success', status: :created, token: @user.token }
+        {
+          message: 'Success',
+          status: :created,
+          token: create_token(@user)
+        }
       else
         status :unprocessable_entity
-        { message: @user.errors, status: :unprocessable_entity }
+        {
+          message: @user.errors,
+          status: :unprocessable_entity
+        }
       end
     end
 
   end
-
-  #############################################################
 
   #/api/v1/log_in
   resource :log_in do
@@ -37,12 +40,13 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :password, type: String
     end
     post do
-      #     authenticate!
       @user = User.find_by_login(params[:login])
       if @user && @user.authenticate(params[:password])
-        # todo: find by token
-        #       log_in @user
-        { message: 'Success', status: :ok, token: @user.token }
+        {
+          message: 'Success',
+          status: :ok,
+          token: create_token(@user)
+        }
       else
         status :unauthorized
         { message: 'Error', status: :unauthorized }
@@ -50,8 +54,6 @@ class VocabularyAPI::Version1::Users < Grape::API
     end
 
   end
-
-  ##############################################################
 
   #/api/v1/users
   resource :users do
@@ -63,37 +65,22 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :email, type: String
     end
     get '/check' do
-      email_found = User.where(email: params[:email]).count > 0
-      login_found = User.where(login: params[:login]).count > 0
+      email_found = User.exists?(email: params[:email])
+      login_found = User.exists?(login: params[:login])
       (email_found || login_found) ? "true" : "false"
     end
 
-    ################################################################
-
-    #/api/v1/users/:id
-    desc 'Get user by id'
-    get '/:id' do
-      set_user
-#      @user = current_user
-      if @user == current_user
-        {
-          name: @user.name,
-          login: @user.login,
-          email: @user.email
-        }
-      else
-        { message: 'Anauthorized access', status: :unauthorized }
-      end
+    #/api/v1/users/show
+    desc 'Show user`s data'
+    get '/show' do
+      authenticate!
+      {
+        name: current_user.name,
+        login: current_user.login,
+        email: current_user.email
+      }
     end
 
-  end
-
-  private
-
-  helpers do
-    def set_user
-      @user = User.find(params[:id])
-    end
   end
 
 end
