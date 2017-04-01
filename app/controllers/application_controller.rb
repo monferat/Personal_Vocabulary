@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   # protect_from_forgery with: :exception
   protect_from_forgery with: :reset_session
-  include SessionsHelper
+  include Knock::Authenticable
+#  include SessionsHelper
 end

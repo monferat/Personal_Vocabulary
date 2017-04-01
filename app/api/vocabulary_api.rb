@@ -1,3 +1,5 @@
+include Knock::Authenticable
+
 class VocabularyAPI < Grape::API
 
   prefix :api
@@ -9,17 +11,16 @@ class VocabularyAPI < Grape::API
     #allow CORS requests
     header['Access-Control-Allow-Origin'] = '*'
     header['Access-Control-Request-Method'] = '*'
+    authenticate_for User
   end
 
+=begin
   helpers do
-    def current_user
-      @current_user ||= User.find_by(id: session[:user_id])
-    end
-
     def authenticate!
-      error!('Unauthorized. Invalid or expired token.', 401) unless current_user
+      error!('Unauthorized') unless current_user
     end
   end
+=end
 
   mount VocabularyAPI::Version1
 
