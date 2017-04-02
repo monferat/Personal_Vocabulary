@@ -44,6 +44,7 @@ gem 'swagger-docs'
 gem 'grape'
 gem 'grape-swagger'
 gem 'grape-swagger-rails'
+gem 'grape-jbuilder'
 
 gem 'hashie-forbidden_attributes'
 

@@ -11,21 +11,15 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :password, type: String
       requires :password_confirmation, type: String
     end
-    post do
+    post '', jbuilder: 'response_message' do
       @user = User.new(params)
       if @user.save
         status :created
-        {
-          message: 'Success',
-          status: :created,
-          token: create_token(@user)
-        }
+        @message = 'Success'
+        @token = create_token(@user)
       else
         status :unprocessable_entity
-        {
-          message: @user.errors,
-          status: :unprocessable_entity
-        }
+        @message = @user.errors
       end
     end
 
@@ -39,17 +33,15 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :login, type: String
       requires :password, type: String
     end
-    post do
+    post '', jbuilder: 'response_message' do
       @user = User.find_by_login(params[:login])
       if @user && @user.authenticate(params[:password])
-        {
-          message: 'Success',
-          status: :ok,
-          token: create_token(@user)
-        }
+        status :ok
+        @message = 'Success'
+        @token = create_token(@user)
       else
         status :unauthorized
-        { message: 'Error', status: :unauthorized }
+        @message = 'Wrong login or password'
       end
     end
 
@@ -72,13 +64,9 @@ class VocabularyAPI::Version1::Users < Grape::API
 
     #/api/v1/users/show
     desc 'Show user`s data'
-    get '/show' do
+    get '/show', jbuilder: 'user' do
       authenticate!
-      {
-        name: current_user.name,
-        login: current_user.login,
-        email: current_user.email
-      }
+      status :ok
     end
 
   end

@@ -6,6 +6,7 @@ class VocabularyAPI < Grape::API
   version 'v1'
   content_type :json, 'application/json; charset=UTF-8'
   format :json
+  formatter :json, Grape::Formatter::Jbuilder
 
   before do
     #allow CORS requests
