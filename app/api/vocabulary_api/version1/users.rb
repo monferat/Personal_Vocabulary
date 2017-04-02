@@ -12,7 +12,7 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :password_confirmation, type: String
     end
     post '', jbuilder: 'response_message' do
-      @user = User.new(params)
+      @user = User.new(permitted_params)
       if @user.save
         status :created
         @message = 'Success'
@@ -34,8 +34,8 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :password, type: String
     end
     post '', jbuilder: 'response_message' do
-      @user = User.find_by_login(params[:login])
-      if @user && @user.authenticate(params[:password])
+      @user = User.find_by_login(permitted_params[:login])
+      if @user && @user.authenticate(permitted_params[:password])
         status :ok
         @message = 'Success'
         @token = create_token(@user)
@@ -57,8 +57,8 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :email, type: String
     end
     get '/check' do
-      email_found = User.exists?(email: params[:email])
-      login_found = User.exists?(login: params[:login])
+      email_found = User.exists?(email: permitted_params[:email])
+      login_found = User.exists?(login: permitted_params[:login])
       (email_found || login_found) ? "true" : "false"
     end
 
@@ -67,6 +67,26 @@ class VocabularyAPI::Version1::Users < Grape::API
     get '/show', jbuilder: 'user' do
       authenticate!
       status :ok
+    end
+
+    #/api/v1/users/edit
+    desc 'Edit user'
+    params do
+      optional :login, type: String
+      optional :name, type: String
+      optional :email, type: String
+      optional :password, type: String
+      optional :password_confirmation, type: String
+    end
+    put '/edit', jbuilder: 'response_message' do
+      authenticate!
+      if current_user.update(permitted_params)
+        status :ok
+        @message = 'Success'
+      else
+        status :unprocessable_entity
+        @message = current_user.errors
+      end
     end
 
   end

@@ -24,6 +24,10 @@ class VocabularyAPI < Grape::API
     def create_token(user)
       Knock::AuthToken.new(payload: { sub: user.id }).token
     end
+
+    def permitted_params
+      declared(params, { include_missing: false })
+    end
   end
 
   mount VocabularyAPI::Version1
