@@ -2,6 +2,7 @@ class ThemesController < ApplicationController
   before_action :set_theme, only: [:edit, :update, :destroy]
 
   def index
+    @themes = Theme.all
   end
 
   def edit
