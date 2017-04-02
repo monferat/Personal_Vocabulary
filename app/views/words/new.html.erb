@@ -1,0 +1,57 @@
+<%= form_for @word, url: words_path, html: { multipart: true } do |f| %>
+
+    <% if @word.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@word.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+          <ul>
+            <% @word.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <br>
+    <fieldset>
+      <div class="form-group">
+        <%= f.label :name, :for => 'textinput' %>
+        <div class="col-md-4"><%= f.text_field :name %></div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :transcription, :for => 'textinput' %>
+        <div class="col-md-4"><%= f.text_field :transcription%></div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :translation, :for => 'textinput' %>
+        <div class="col-md-4"><%= f.text_field :translation %></div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :associate, :for => 'textarea'%><br>
+        <div class="col-md-4"><%= f.text_area :associate %></div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :phrase, :for => 'textarea'%><br>
+        <div class="col-md-4"><%= f.text_area :phrase %></div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :image %><br>
+        <%= f.file_field :image %>
+      </div>
+
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="singlebutton"></label>
+        <div>
+          <div class="actions">
+            <%= f.submit class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+
+    </fieldset>
+<% end %>

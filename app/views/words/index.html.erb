@@ -1,0 +1,28 @@
+<body>
+<div class="container">
+  <div>
+    <h1>Words</h1>
+  </div>
+
+  <div class="row">
+    <div>
+      <% @words.each do |word| %>
+          <div>
+            <h2><%= word.name %></h2>
+            <p>Author: <%= word.user.name %></p>
+            <p><%= word.transcription %></p>
+            <p><%= word.translation %></p>
+            <p><%= word.associate %></p>
+            <p><%= word.phrase %></p>
+            <%= image_tag word.image.url %>
+          </div>
+      <% end %>
+
+      <%= link_to 'New Word', new_word_path, :class => 'btn btn-primary post' %>
+    </div>
+
+    <br>
+  </div>
+
+</div>
+</body>

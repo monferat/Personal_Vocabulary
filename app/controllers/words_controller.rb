@@ -3,7 +3,7 @@ class WordsController < ApplicationController
   before_action :set_word, only: [:show, :edit, :update, :destroy]
 
   def index
-    page = params[:page_number]
+    page = params[:page]
     if page
       @words = Word.all[0..page.to_i]
     else
@@ -37,9 +37,11 @@ class WordsController < ApplicationController
 
     respond_to do |format|
       if @word.save
+        format.html { redirect_to words_url}
         msg = { message: 'Success' }
         format.json { render json: msg, status: :created}
       else
+        format.html { render 'new' }
         format.json { render json: @word.errors, status: :unprocessable_entity }
       end
     end
@@ -80,7 +82,7 @@ class WordsController < ApplicationController
   end
 
   def word_params
-    params.require(:word).permit(:name, :transcription, :translation, :associate, :phrase, :url, :share, :learned)
+    params.require(:word).permit(:name, :transcription, :translation, :associate, :phrase, :image, :share, :learned)
   end
 
 
