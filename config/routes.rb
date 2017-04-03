@@ -28,18 +28,15 @@ Rails.application.routes.draw do
 =end
   resources :users, only: [:show, :edit, :update, :destroy]
   resources :themes, only: [:create, :destroy]
-  resources :users do
-    collection do
-      get 'check'
-    end
-  end
+  resources :words, only: [:show, :edit, :update, :destroy]
 
   resources :themes, only: [:index, :create, :destroy]
+=begin
   resources :words do
     collection do
       get 'wordscount'
     end
   end
-
+=end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
