@@ -34,11 +34,10 @@ class VocabularyAPI::Version1::Users < Grape::API
       requires :password, type: String
     end
     post '', jbuilder: 'response_message' do
-      @user = User.find_by_login(permitted_params[:login])
+      @user = User.find_by(login: permitted_params[:login])
       if @user && @user.authenticate(permitted_params[:password])
         status :ok
         @message = 'Success'
-        @token = create_token(@user)
       else
         status :unauthorized
         @message = 'Wrong login or password'

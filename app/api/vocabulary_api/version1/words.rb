@@ -31,22 +31,11 @@ class VocabularyAPI::Version1::Words < Grape::API
       optional :image, type: Rack::Multipart::UploadedFile
     end
     post '/new', jbuilder: 'response_message' do
-      #authenticate!
-      new_file = ActionDispatch::Http::UploadedFile.new(params[:image])
-
-      @word = Word.new
-      @word.name = permitted_params[:name]
-      @word.associate = permitted_params[:associate]
-      @word.learned = permitted_params[:learned]
-      @word.transcription = permitted_params[:transcription]
-      @word.translation = permitted_params[:translation]
-      @word.share = permitted_params[:share]
-      @word.phrase = permitted_params[:phrase]
-      #word.user = current_user
-      @word.user = User.find_by_id(16) #- from controller
-      #@word.user = current_user if current_user - from controller (commented)
-      @word.theme = Theme.find_by_name('City')
-      @word.image = new_file
+      authenticate!
+      @word = Word.new(permitted_params)
+      @word.user = current_user
+      @word.theme = Theme.find_by(name: params[:name])
+      @word.image = ActionDispatch::Http::UploadedFile.new(params[:image])
 
       if @word.save
         status :ok
@@ -57,55 +46,61 @@ class VocabularyAPI::Version1::Words < Grape::API
       end
     end
 
-
-  end
-
-=begin
-
-  def edit
-    unless @word.user.eql?(current_user)
-      redirect_to words_path
+    #/api/v1/words/edit
+    desc 'Edit word'
+    params do
+      requires :name, type: String
+      optional :transcription, type: String
+      optional :translation, type: String
+      optional :associate, type: String
+      optional :phrase, type: String
+      optional :share, type: String
+      optional :learned, type: Boolean
+      optional :theme_name, type: String
+      optional :image, type: Rack::Multipart::UploadedFile
     end
-  end
-
-  def update
-    respond_to do |format|
-      if @word.update(word_params)
-        msg = { message: 'Updated' }
-        format.json { render json: msg, status: :ok}
+    post '/edit', jbuilder: 'response_message' do
+      authenticate!
+      set_word
+      if @word.update(permitted_params)
+        status :ok
+        @message = 'Success'
       else
-        format.json { render json: @word.errors, status: :unprocessable_entity }
+        status :unprocessable_entity
+        @message = @word.errors
       end
     end
-  end
 
-  def destroy
-    if @word.user.eql?(current_user)
-      @word.destroy
-      respond_to do |format|
-        msg = { message: 'Deleted' }
-        format.json { render json: msg, status: :ok }
-      end
-    else
-      redirect_to root_path
+    #api/v1/words/delete
+    desc 'Delete word'
+    params do
+      requires :name
     end
-  end
+    delete '/delete', jbuilder: 'response_message' do
+      set_word
+      if @word.destroy
+        status :ok
+        @message = 'Word deleted'
+      else
+        status :unprocessable_entity
+        @message = @word.errors
+      end
+    end
 
-  def wordscount
-    message = Word.all.size.to_s
-    render json: { count: message }
+    #/api/v1/words/count
+    desc 'Count all words'
+    get '/count', jbuilder: 'response_message' do
+      @message = Word.all.size.to_s
+    end
+
   end
 
   private
 
-  def set_word
-    @word = Word.find(params[:id])
+  helpers do
+    def set_word
+      @word = Word.find(permitted_params)
+    end
   end
-
-  def word_params
-    params.require(:word).permit(:name, :transcription, :translation, :associate, :phrase, :image, :share, :learned)
-  end
-
-=end
 
 end
