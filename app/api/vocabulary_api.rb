@@ -26,7 +26,7 @@ class VocabularyAPI < Grape::API
     end
 
     def permitted_params
-      declared(params, { include_missing: false })
+      @permitted_params ||= declared(params, { include_missing: false })
     end
   end
 
