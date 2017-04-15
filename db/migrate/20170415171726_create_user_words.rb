@@ -1,16 +1,15 @@
-class CreateWords < ActiveRecord::Migration[5.0]
+class CreateUserWords < ActiveRecord::Migration[5.0]
   def change
-    create_table :words do |t|
-      t.string :name
+    create_table :user_words do |t|
       t.string :transcription
       t.string :translation
-      t.text :association
+      t.text :associate
       t.text :phrase
       t.string :url
-      t.string :share
+      t.boolean :share
       t.boolean :learned
       t.integer :user_id
-      t.integer :theme_id
+      t.integer :word_id
 
       t.timestamps
     end

@@ -10,5 +10,6 @@ class VocabularyAPI::Version1 < Grape::API
 
   mount Users
   mount Words
+  mount UserWords
 
 end

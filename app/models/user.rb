@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  has_many :words
+  has_many :user_words
 
   before_save { self.email = email.downcase }
 

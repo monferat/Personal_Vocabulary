@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  transcription: MyString
+  translation: MyString
+  associate: MyText
+  phrase: MyText
+  url: MyString
+  share: false
+  learned: false
+
+two:
+  transcription: MyString
+  translation: MyString
+  associate: MyText
+  phrase: MyText
+  url: MyString
+  share: false
+  learned: false

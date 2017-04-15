@@ -2,24 +2,6 @@
 
 one:
   name: MyString
-  transcription: MyString
-  translation: MyString
-  association: MyText
-  phrase: MyText
-  url: MyString
-  share: MyString
-  learned: false
-  user_id: 1
-  theme_id: 1
 
 two:
   name: MyString
-  transcription: MyString
-  translation: MyString
-  association: MyText
-  phrase: MyText
-  url: MyString
-  share: MyString
-  learned: false
-  user_id: 1
-  theme_id: 1

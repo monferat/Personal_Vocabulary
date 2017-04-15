@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170402135118) do
+ActiveRecord::Schema.define(version: 20170415171904) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,24 @@ ActiveRecord::Schema.define(version: 20170402135118) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "user_words", force: :cascade do |t|
+    t.string   "transcription"
+    t.string   "translation"
+    t.text     "associate"
+    t.text     "phrase"
+    t.string   "url"
+    t.boolean  "share"
+    t.boolean  "learned"
+    t.integer  "user_id"
+    t.integer  "word_id"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
   end
 
   create_table "users", force: :cascade do |t|
@@ -32,21 +50,9 @@ ActiveRecord::Schema.define(version: 20170402135118) do
 
   create_table "words", force: :cascade do |t|
     t.string   "name"
-    t.string   "transcription"
-    t.string   "translation"
-    t.text     "associate"
-    t.text     "phrase"
-    t.string   "url"
-    t.string   "share"
-    t.boolean  "learned"
-    t.integer  "user_id"
     t.integer  "theme_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-    t.string   "image_file_name"
-    t.string   "image_content_type"
-    t.integer  "image_file_size"
-    t.datetime "image_updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

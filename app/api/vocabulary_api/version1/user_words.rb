@@ -1,4 +1,4 @@
-class VocabularyAPI::Version1::Words < Grape::API
+class VocabularyAPI::Version1::UserWords < Grape::API
 
   #/api/v1/words
   resources :words do
@@ -10,47 +10,38 @@ class VocabularyAPI::Version1::Words < Grape::API
     end
     get '/my', jbuilder: 'all_words' do
       authenticate!
-      @words = Word.all.where(user_id: current_user.id)
-    end
-
-    #/api/v1/words/shared
-    desc 'Show all words from vocabulary'
-    params do
-      optional :page, type: Integer
-    end
-    get '/shared', jbuilder: 'all_words' do
-      page = permitted_params[:page]
-      if page
-        @words = Word.all.where(share: true)[0..page]
-      else
-        @words = Word.all.where(share: true)
-      end
+      @words = UserWord.all.where(user_id: current_user.id)
     end
 
     #/api/v1/words/new
     desc 'Add new word to personal vocabulary'
     params do
-      requires :word, type: Hash do
-        requires :name, type: String
-        requires :transcription, type: String
-        requires :translation, type: String
-        requires :associate, type: String
-        requires :phrase, type: String
-        requires :share, type: String
-        requires :learned, type: Boolean
-      end
+      requires :name, type: String
+      optional :transcription, type: String
+      optional :translation, type: String
+      optional :associate, type: String
+      optional :phrase, type: String
+      optional :share, type: Boolean
+      optional :learned, type: Boolean
       requires :theme_name, type: String
       optional :image, type: Rack::Multipart::UploadedFile
     end
     post '/new', jbuilder: 'response_message' do
       authenticate!
-      @userWord = UserWord.new(permitted_params[:word])
-      @word = Word.new(permitted_params[:word])
+      @word = Word.new(name: permitted_params[:name])
       @word.theme = Theme.find_by(name: permitted_params[:theme_name])
-      @word.user_id = current_user.id
-      @word.image = ActionDispatch::Http::UploadedFile.new(permitted_params[:image])
 
-      if @word.save
+      @user_word = UserWord.new(transcription: permitted_params[:transcription],
+                                translation: permitted_params[:translation],
+                                associate: permitted_params[:associate],
+                                phrase: permitted_params[:phrase],
+                                share: permitted_params[:share],
+                                learned: permitted_params[:learned])
+      @user_word.word = @word
+      @user_word.user = current_user
+      @user_word.image = ActionDispatch::Http::UploadedFile.new(permitted_params[:image])
+
+      if @word.save && @user_word.save
         status :ok
         @message = 'Success'
       else
@@ -60,14 +51,14 @@ class VocabularyAPI::Version1::Words < Grape::API
     end
 
     #/api/v1/words/edit
-    desc 'Edit word'
+    desc 'Edit user word'
     params do
       requires :name, type: String
       optional :transcription, type: String
       optional :translation, type: String
       optional :associate, type: String
       optional :phrase, type: String
-      optional :share, type: String
+      optional :share, type: Boolean
       optional :learned, type: Boolean
       optional :theme_name, type: String
       optional :image, type: Rack::Multipart::UploadedFile
