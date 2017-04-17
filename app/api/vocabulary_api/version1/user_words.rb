@@ -22,8 +22,6 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       word = permitted_params[:name]
       theme = Theme.find_by(name: permitted_params[:theme_name])
 
-      # need to be resolved by new migrations:
-      # if the word is new, theme won't change!!
       @word = Word.exists?(name: word) ? Word.find_by(name: word) : Word.new(name: word, theme: theme)
 
       @user_word = UserWord.new(user_word_params)
