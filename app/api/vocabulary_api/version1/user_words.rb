@@ -100,6 +100,17 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       end
     end
 
+    #/api/v1/words/unique
+    desc 'Check if user word is already exist in user vocabulary'
+    params do
+      requires :word, type: String
+    end
+    get '/unique', jbuilder: 'response_message' do
+      authenticate!
+      @message = UserWord.exists?(word: Word.find_by(name: permitted_params[:word]),
+                                  user: current_user).to_s
+    end
+
   end
 
   private

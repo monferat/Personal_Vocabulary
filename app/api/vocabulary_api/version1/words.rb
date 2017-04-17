@@ -14,9 +14,9 @@ class VocabularyAPI::Version1::Words < Grape::API
       @user_words = page ? user_words[0..page] : user_words
     end
 
-    #/api/v1/words/count
+    #/api/v1/words/count/all
     desc 'Count all words'
-    get '/count', jbuilder: 'response_message' do
+    get '/count/all', jbuilder: 'response_message' do
       @message = Word.all.size.to_s
     end
 
