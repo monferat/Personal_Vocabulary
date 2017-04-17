@@ -111,6 +111,13 @@ class VocabularyAPI::Version1::UserWords < Grape::API
                                   user: current_user).to_s
     end
 
+    #/api/v1/words/count/my
+    desc 'Count shared words'
+    get '/count/my', jbuilder: 'response_message' do
+      authenticate!
+      @message = UserWord.all.where(user: current_user).size.to_s
+    end
+
   end
 
   private

@@ -20,6 +20,12 @@ class VocabularyAPI::Version1::Words < Grape::API
       @message = Word.all.size.to_s
     end
 
+    #/api/v1/words/count/shared
+    desc 'Count shared words'
+    get '/count/shared', jbuilder: 'response_message' do
+      @message = UserWord.all.where(share: true).size.to_s
+    end
+
   end
 
 end
