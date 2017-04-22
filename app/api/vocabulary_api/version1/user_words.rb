@@ -3,6 +3,8 @@ class VocabularyAPI::Version1::UserWords < Grape::API
   #/api/v1/words
   resources :words do
 
+    @user = current_user if current_user
+
     #/api/v1/words/new
     desc 'Add new word to personal vocabulary'
     params do
@@ -49,6 +51,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     desc 'Show all words of current user'
     params do
       optional :page, type: Integer
+      optional :range, type: Integer
       optional :sort, type: String
     end
     get '/my', jbuilder: 'my_words' do
@@ -56,17 +59,17 @@ class VocabularyAPI::Version1::UserWords < Grape::API
 
       page = permitted_params[:page]
       sort_param = permitted_params[:sort]
-      @user = current_user if current_user
 
       if sort_param == 'recent'
         words_desc = @user.user_words.recent
       elsif sort_param == 'alphabetic'
-        words_desc = @user.user_words.order('name ASC')
+        words_desc = @user.user_words.includes(:word).order("words.name ASC")
       else
         words_desc = @user.user_words
       end
 
-      @user_words = page ? words_desc[0..page] : words_desc
+      range = 100 unless range
+      @user_words = page ? words_desc[page*range..page*range-range] : words_desc
     end
 
     #/api/v1/words/edit
@@ -124,7 +127,18 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     desc 'Count shared words'
     get '/count/my', jbuilder: 'response_message' do
       authenticate!
-      @message = UserWord.all.where(user: current_user).size.to_s
+      @message = @user.user_words.size.to_s
+    end
+
+    #/api/v1/words/count/my
+    desc 'Count shared words'
+    params do
+      requires :filter, type: String
+    end
+    get '/filter', jbuilder: 'my_words' do
+      authenticate!
+      filter = permitted_params[:filter]
+    #   TO DO
     end
 
   end
