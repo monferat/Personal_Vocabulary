@@ -49,13 +49,24 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     desc 'Show all words of current user'
     params do
       optional :page, type: Integer
+      optional :sort, type: String
     end
     get '/my', jbuilder: 'my_words' do
       authenticate!
 
       page = permitted_params[:page]
-      user_words = UserWord.all.where(user: current_user)
-      @user_words = page ? user_words[0..page] : user_words
+      sort_param = permitted_params[:sort]
+      @user = current_user if current_user
+
+      if sort_param == 'recent'
+        words_desc = @user.user_words.recent
+      elsif sort_param == 'alphabetic'
+        words_desc = @user.user_words.order('name ASC')
+      else
+        words_desc = @user.user_words
+      end
+
+      @user_words = page ? words_desc[0..page] : words_desc
     end
 
     #/api/v1/words/edit
