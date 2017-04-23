@@ -3,8 +3,6 @@ class VocabularyAPI::Version1::UserWords < Grape::API
   #/api/v1/words
   resources :words do
 
-    @user = current_user if current_user
-
     #/api/v1/words/new
     desc 'Add new word to personal vocabulary'
     params do
@@ -19,7 +17,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :image, type: Rack::Multipart::UploadedFile
     end
     post '/new', jbuilder: 'response_message' do
-      authenticate!
+      set_auth
 
       word = permitted_params[:name]
       theme = Theme.find_by(name: permitted_params[:theme_name])
@@ -55,7 +53,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :sort, type: String
     end
     get '/my', jbuilder: 'my_words' do
-      authenticate!
+      set_auth
 
       page = permitted_params[:page]
       sort_param = permitted_params[:sort]
@@ -126,19 +124,20 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     #/api/v1/words/count/my
     desc 'Count shared words'
     get '/count/my', jbuilder: 'response_message' do
-      authenticate!
+      set_auth
       @message = @user.user_words.size.to_s
     end
 
     #/api/v1/words/count/my
-    desc 'Count shared words'
+    desc 'Filter words by shared(true or false), learn(true or false), category(theme_name)'
     params do
-      requires :filter, type: String
+      requires :shared, type: Boolean
+      requires :learn, type: Boolean
+      requires :category, type: String
     end
     get '/filter', jbuilder: 'my_words' do
-      authenticate!
-      filter = permitted_params[:filter]
-    #   TO DO
+      set_auth
+      @user_words = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
     end
 
   end
@@ -158,6 +157,11 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       phrase: permitted_params[:phrase],
       share: permitted_params[:share],
       learned: permitted_params[:learned]}
+    end
+
+    def set_auth
+      authenticate!
+      @user = current_user if current_user
     end
   end
 
