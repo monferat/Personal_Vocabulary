@@ -128,7 +128,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       @message = @user.user_words.size.to_s
     end
 
-    #/api/v1/words/count/my
+    #/api/v1/words/filter
     desc 'Filter words by shared(true or false), learn(true or false), category(theme_name)'
     params do
       requires :shared, type: Boolean
@@ -138,6 +138,22 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     get '/filter', jbuilder: 'my_words' do
       set_auth
       @user_words = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
+    end
+
+    #/api/v1/words/check
+    desc 'Check word'
+    params do
+      requires :word_name, type: String
+    end
+    get '/check', jbuilder: 'response_message' do
+      word_name = params[:word_name].downcase
+      @correct_words = {}
+      File.open('./lib/assets/words.txt') do |file|
+        file.each do |line|
+          @correct_words[line.strip] = true
+        end
+      end
+      @message = @correct_words[word_name] ? 'true' : 'false'
     end
 
   end

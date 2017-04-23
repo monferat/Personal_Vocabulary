@@ -20,6 +20,7 @@
 
 .idea/
 /config/database.yml
+/lib/assets/words.txt
 /config/application.yml
 ## Ignore Swagger JSON files.
 /public/apidocs/
