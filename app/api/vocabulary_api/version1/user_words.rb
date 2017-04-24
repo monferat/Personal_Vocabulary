@@ -137,7 +137,8 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     end
     get '/filter', jbuilder: 'my_words' do
       set_auth
-      @user_words = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
+      words_desc = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
+      @user_words = page ? words_desc[page*range..page*range-range] : words_desc
     end
 
     #/api/v1/words/check
