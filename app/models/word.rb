@@ -1,4 +1,6 @@
 class Word < ApplicationRecord
+  include PgSearch
+
   belongs_to :theme
   has_many :user_words
 

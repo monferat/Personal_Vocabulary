@@ -55,7 +55,8 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     get '/my', jbuilder: 'my_words' do
       set_auth
 
-      page = permitted_params[:page]
+      page = params[:page]
+      range = params[:range]
       sort_param = permitted_params[:sort]
 
       if sort_param == 'recent'
@@ -123,8 +124,12 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       requires :shared, type: Boolean
       requires :learn, type: Boolean
       requires :category, type: String
+      optional :page, type: Integer
+      optional :range, type: Integer
     end
     get '/filter', jbuilder: 'my_words' do
+      page = params[:page]
+      range = params[:range]
       set_auth
       words = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
       @user_words = page ? words[page*range..page*range-range] : words
@@ -139,6 +144,26 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       word_name = params[:word_name].downcase
       @correct_words = checker
       @message = @correct_words[word_name] ? 'true' : 'false'
+    end
+
+    #/api/v1/words/search
+    desc 'Search word'
+    params do
+      requires :text, type: String
+      requires :lang, type: String
+      optional :page, type: Integer
+      optional :range, type: Integer
+    end
+    get '/search', jbuilder: 'my_words' do
+      page = params[:page]
+      range = params[:range]
+      set_auth
+      if params[:lang] == 'ru'
+        words = @user.user_words.search_by_translation(params[:text])
+      else
+        words = @user.user_words.search_by_word(params[:text])
+      end
+      @user_words = page ? words[page*range..page*range-range] : words
     end
 
   end

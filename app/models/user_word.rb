@@ -1,5 +1,6 @@
 class UserWord < ApplicationRecord
   include Filterable
+  include PgSearch
 
   belongs_to :user
   belongs_to :word
@@ -11,5 +12,17 @@ class UserWord < ApplicationRecord
   scope :shared, -> (shared){ where share: shared }
   scope :learn, -> (learn){ where learned: learn }
   scope :category, -> (category_name){ joins(word: :theme).where('themes.name = ?', category_name) }
+
+  pg_search_scope :search_by_transcription, :against => :transcription
+  pg_search_scope :search_by_translation,
+                  :against => :translation,
+                  :using => {
+                      :tsearch => {:prefix => true}
+                  }
+  pg_search_scope :search_by_word,
+                  :associated_against => { :word => :name },
+                  :using => {
+                      :tsearch => {:prefix => true}
+                  }
 
 end
