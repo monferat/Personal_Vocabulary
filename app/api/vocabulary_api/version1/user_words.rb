@@ -59,15 +59,15 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       sort_param = permitted_params[:sort]
 
       if sort_param == 'recent'
-        words_desc = @user.user_words.recent
+        words = @user.user_words.recent
       elsif sort_param == 'alphabetic'
-        words_desc = @user.user_words.includes(:word).order("words.name ASC")
+        words = @user.user_words.includes(:word).order("words.name ASC")
       else
-        words_desc = @user.user_words
+        words = @user.user_words
       end
 
       range = 100 unless range
-      @user_words = page ? words_desc[page*range..page*range-range] : words_desc
+      @user_words = page ? words[page*range..page*range-range] : words
     end
 
     #/api/v1/words/edit
@@ -110,17 +110,6 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       end
     end
 
-    #/api/v1/words/unique
-    desc 'Check if user word is already exist in user vocabulary'
-    params do
-      requires :word, type: String
-    end
-    get '/unique', jbuilder: 'response_message' do
-      authenticate!
-      @message = UserWord.exists?(word: Word.find_by(name: permitted_params[:word]),
-                                  user: current_user).to_s
-    end
-
     #/api/v1/words/count/my
     desc 'Count shared words'
     get '/count/my', jbuilder: 'response_message' do
@@ -137,8 +126,8 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     end
     get '/filter', jbuilder: 'my_words' do
       set_auth
-      words_desc = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
-      @user_words = page ? words_desc[page*range..page*range-range] : words_desc
+      words = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
+      @user_words = page ? words[page*range..page*range-range] : words
     end
 
     #/api/v1/words/check
@@ -148,12 +137,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     end
     get '/check', jbuilder: 'response_message' do
       word_name = params[:word_name].downcase
-      @correct_words = {}
-      File.open('./lib/assets/words.txt') do |file|
-        file.each do |line|
-          @correct_words[line.strip] = true
-        end
-      end
+      @correct_words = checker
       @message = @correct_words[word_name] ? 'true' : 'false'
     end
 
@@ -162,6 +146,8 @@ class VocabularyAPI::Version1::UserWords < Grape::API
   private
 
   helpers do
+    include Checker
+
     def set_word
       word = Word.find_by(name: permitted_params[:name])
       @user_word = UserWord.find_by(word: word, user: current_user)
