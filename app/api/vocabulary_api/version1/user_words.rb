@@ -11,18 +11,16 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :translation, type: String
       optional :associate, type: String
       optional :phrase, type: String
-      optional :share, type: Boolean
-      optional :learned, type: Boolean
+      optional :share, type: Boolean, default: false
+      optional :learned, type: Boolean, default: false
       requires :theme_name, type: String
       optional :image, type: Rack::Multipart::UploadedFile
     end
     post '/new', jbuilder: 'response_message' do
       set_auth
 
-      word = permitted_params[:name]
       theme = Theme.find_by(name: permitted_params[:theme_name])
-
-      @word = Word.exists?(name: word) ? Word.find_by(name: word) : Word.new(name: word, theme: theme)
+      @word = Word.find_or_create_by(name: permitted_params[:name], theme: theme)
 
       @user_word = UserWord.new(user_word_params)
       @user_word.word = @word
@@ -31,18 +29,14 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       image = permitted_params[:image]
       @user_word.image = ActionDispatch::Http::UploadedFile.new(image) if image
 
-      if @word.save
-        if @user_word.save
-          status :ok
-          @message = 'Success'
-        else
-          status :unprocessable_entity
-          @message = @user_word.errors
-        end
+      if @user_word.save
+        status :ok
+        @message = 'Success'
       else
         status :unprocessable_entity
-        @message = @word.errors
+        @message = @user_word.errors
       end
+
     end
 
     #/api/v1/words/my
@@ -164,6 +158,20 @@ class VocabularyAPI::Version1::UserWords < Grape::API
         words = @user.user_words.search_by_word(params[:text])
       end
       @user_words = page ? words[page*range..page*range-range] : words
+    end
+
+    #/api/v1/words/notification
+    get '/notification', jbuilder: 'my_words' do
+      set_auth
+      @user_words = UserWord.all.where(learned: false, user: @user)
+    end
+
+    #/api/v1/words/send_notification
+    get '/send_notification' do
+      set_auth
+      @user_words = UserWord.all.where(learned: false, user: @user)
+      NotificationMailer.send_words(@user, @user_words).deliver
+      @message = "message sent to #{@user.email}"
     end
 
   end
