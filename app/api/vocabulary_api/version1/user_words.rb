@@ -3,7 +3,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
   #/api/v1/words
   resources :words do
 
-    #/api/v1/words/new
+    #/api/v1/words
     desc 'Add new word to personal vocabulary'
     params do
       requires :name, type: String
@@ -11,18 +11,16 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :translation, type: String
       optional :associate, type: String
       optional :phrase, type: String
-      optional :share, type: Boolean
-      optional :learned, type: Boolean
+      optional :share, type: Boolean, default: false
+      optional :learned, type: Boolean, default: false
       requires :theme_name, type: String
       optional :image, type: Rack::Multipart::UploadedFile
     end
-    post '/new', jbuilder: 'response_message' do
+    post '', jbuilder: 'response_message' do
       set_auth
 
-      word = permitted_params[:name]
       theme = Theme.find_by(name: permitted_params[:theme_name])
-
-      @word = Word.exists?(name: word) ? Word.find_by(name: word) : Word.new(name: word, theme: theme)
+      @word = Word.find_or_create_by(name: permitted_params[:name], theme: theme)
 
       @user_word = UserWord.new(user_word_params)
       @user_word.word = @word
@@ -31,19 +29,16 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       image = permitted_params[:image]
       @user_word.image = ActionDispatch::Http::UploadedFile.new(image) if image
 
-      if @word.save
-        if @user_word.save
-          status :ok
-          @message = 'Success'
-        else
-          status :unprocessable_entity
-          @message = @user_word.errors
-        end
+      if @user_word.save
+        status :ok
+        @message = 'Success'
       else
         status :unprocessable_entity
-        @message = @word.errors
+        @message = @user_word.errors
       end
+
     end
+
 
     #/api/v1/words/my
     desc 'Show all words of current user'
