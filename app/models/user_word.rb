@@ -6,7 +6,9 @@ class UserWord < ApplicationRecord
   belongs_to :word
 
   has_attached_file :image, default_url: 'missing.png'
-  validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+  # validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+  validates_attachment :image, presence: true
+  do_not_validate_attachment_file_type :image
 
   scope :recent, -> { order(:created_at).reverse }
   scope :shared, -> (shared){ where share: shared }

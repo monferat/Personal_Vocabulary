@@ -14,7 +14,10 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :share, type: Boolean
       optional :learned, type: Boolean
       requires :theme_name, type: String
-      optional :image, type: Rack::Multipart::UploadedFile
+      requires :image, type: Hash do
+        requires :data, type: String
+        requires :filename, type: String
+      end
     end
     post '/new', jbuilder: 'response_message' do
       set_auth
@@ -28,8 +31,9 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       @user_word.word = @word
       @user_word.user = current_user
 
-      image = permitted_params[:image]
-      @user_word.image = ActionDispatch::Http::UploadedFile.new(image) if image
+      image = Paperclip.io_adapters.for(permitted_params[:image][:data])
+      image.original_filename = permitted_params[:image][:filename]
+      @user_word.image = image if image
 
       if @word.save
         if @user_word.save
