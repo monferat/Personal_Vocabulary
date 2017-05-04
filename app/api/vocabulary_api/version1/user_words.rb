@@ -160,13 +160,33 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       @user_words = page ? words[page*range..page*range-range] : words
     end
 
+
+    #/api/v1/words/notifier
+    desc 'Words for the given date'
+    params do
+      requires :date, type: DateTime
+    end
+    get '/notifier', jbuilder: 'my_words' do
+      set_auth
+
+      current_date = permitted_params[:date]
+      dates = [current_date.yesterday.beginning_of_day..current_date.end_of_day]
+      dates.concat dates_for_period(current_date, 1.week)
+      dates.concat dates_for_period(current_date, 1.month)
+      dates.concat dates_for_period(current_date, 1.year)
+
+      @user_words = UserWord.all.where(user: @user, learned: false, created_at: dates)
+    end
+
     #/api/v1/words/notification
+    desc 'temporary'
     get '/notification', jbuilder: 'my_words' do
       set_auth
       @user_words = UserWord.all.where(learned: false, user: @user)
     end
 
     #/api/v1/words/send_notification
+    desc 'temporary'
     get '/send_notification' do
       set_auth
       @user_words = UserWord.all.where(learned: false, user: @user)
@@ -198,6 +218,16 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     def set_auth
       authenticate!
       @user = current_user if current_user
+    end
+
+    def dates_for_period(date, period)
+      dates = []
+      date -= period
+      while date.end_of_day > @user.created_at
+        dates.append(date.beginning_of_day..date.end_of_day)
+        date -= period
+      end
+      dates
     end
   end
 
