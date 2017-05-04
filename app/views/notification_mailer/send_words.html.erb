@@ -1,18 +1,12 @@
 <h1>Words for today!</h1>
 
 <p>Hello, <%= @user.name %>!</p>
-<p>There are words you marked as unlearned. Enjoy learning!</p>
+<p>There are unlearned words in your vocabulary. Enjoy learning!</p>
 
 <% @user_words.each do |user_word| %>
   <h2><%= user_word.word.name %></h2>
-  <p>Transcription: <%= user_word.transcription %></p>
-  <p>Translation: <%= user_word.translation %></p>
-  <p>Associate: <%= user_word.associate %></p>
-  <p>Prase: <%= user_word.phrase %></p>
-  <%= image_tag user_word.image.url %>
+  <p><%= user_word.translation %></p>
   <hr/>
 <% end %>
 
 <hr/>
-
-<h1>THERE WILL BE LINK TO WORD LIST</h1>
