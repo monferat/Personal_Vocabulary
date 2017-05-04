@@ -67,7 +67,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       end
 
       range = 100 unless range
-      @user_words = page ? words[page*range..page*range-range] : words
+      paginate(page, range, words)
     end
 
     #/api/v1/words/edit
@@ -80,7 +80,10 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :phrase, type: String
       optional :share, type: Boolean
       optional :learned, type: Boolean
-      optional :image, type: Rack::Multipart::UploadedFile
+      optional :image, type: Hash do
+        requires :data, type: String
+        requires :filename, type: String
+      end
     end
     post '/edit', jbuilder: 'response_message' do
       authenticate!
@@ -131,7 +134,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       range = params[:range]
       set_auth
       words = @user.user_words.filter(permitted_params.slice(:shared, :learn, :category))
-      @user_words = page ? words[page*range..page*range-range] : words
+      paginate(page, range, words)
     end
 
     #/api/v1/words/check
@@ -162,7 +165,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       else
         words = @user.user_words.search_by_word(params[:text])
       end
-      @user_words = page ? words[page*range..page*range-range] : words
+      paginate(page, range, words)
     end
 
   end
@@ -189,6 +192,10 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     def set_auth
       authenticate!
       @user = current_user if current_user
+    end
+
+    def paginate(page, range, words)
+      @user_words = page ? words[page*range-range..page*range] : words
     end
   end
 
