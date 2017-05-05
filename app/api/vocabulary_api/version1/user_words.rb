@@ -178,22 +178,6 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       @user_words = UserWord.all.where(user: @user, learned: false, created_at: dates)
     end
 
-    #/api/v1/words/notification
-    desc 'temporary'
-    get '/notification', jbuilder: 'my_words' do
-      set_auth
-      @user_words = UserWord.all.where(learned: false, user: @user)
-    end
-
-    #/api/v1/words/send_notification
-    desc 'temporary'
-    get '/send_notification' do
-      set_auth
-      @user_words = UserWord.all.where(learned: false, user: @user)
-      NotificationMailer.send_words(@user, @user_words).deliver
-      @message = "message sent to #{@user.email}"
-    end
-
   end
 
   private
