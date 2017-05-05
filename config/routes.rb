@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  require 'sidekiq/web'
+  require 'sidekiq/cron/web'
+  mount Sidekiq::Web => '/sidekiq'
+
   post 'user_token' => 'user_token#create'
   mount VocabularyAPI => '/'
   mount GrapeSwaggerRails::Engine => '/swagger'

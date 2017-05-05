@@ -13,4 +13,6 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }
 
   has_secure_password
+
+  after_create { NotificationMailer.new_user(self).deliver }
 end

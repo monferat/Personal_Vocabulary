@@ -168,6 +168,24 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       paginate(page, range, words)
     end
 
+
+    #/api/v1/words/notifier
+    desc 'Words for the given date'
+    params do
+      requires :date, type: DateTime
+    end
+    get '/notifier', jbuilder: 'my_words' do
+      set_auth
+
+      current_date = permitted_params[:date]
+      dates = [current_date.yesterday.beginning_of_day..current_date.end_of_day]
+      dates.concat dates_for_period(current_date, 1.week)
+      dates.concat dates_for_period(current_date, 1.month)
+      dates.concat dates_for_period(current_date, 1.year)
+
+      @user_words = UserWord.all.where(user: @user, learned: false, created_at: dates)
+    end
+
   end
 
   private
@@ -196,6 +214,16 @@ class VocabularyAPI::Version1::UserWords < Grape::API
 
     def paginate(page, range, words)
       @user_words = page ? words[page*range-range..page*range] : words
+    end
+
+    def dates_for_period(date, period)
+      dates = []
+      date -= period
+      while date.end_of_day > @user.created_at
+        dates.append(date.beginning_of_day..date.end_of_day)
+        date -= period
+      end
+      dates
     end
   end
 
