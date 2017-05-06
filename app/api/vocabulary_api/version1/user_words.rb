@@ -183,12 +183,12 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     #/api/v1/words/notifier
     desc 'Words for the given date'
     params do
-      requires :date, type: DateTime
+      requires :date, type: String
     end
     get '/notifier', jbuilder: 'my_words' do
       set_auth
 
-      current_date = permitted_params[:date]
+      current_date = permitted_params[:date].to_date
       dates = [current_date.yesterday.beginning_of_day..current_date.end_of_day]
       dates.concat dates_for_period(current_date, 1.week)
       dates.concat dates_for_period(current_date, 1.month)
