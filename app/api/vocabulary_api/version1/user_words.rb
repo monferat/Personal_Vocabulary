@@ -14,9 +14,9 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :share, type: Boolean, default: false
       optional :learned, type: Boolean, default: false
       requires :theme_name, type: String
-      requires :image, type: Hash do
-        requires :data, type: String
-        requires :filename, type: String
+      optional :image, type: Hash do
+        optional :data, type: String
+        optional :filename, type: String
       end
     end
     post '', jbuilder: 'response_message' do
@@ -81,13 +81,17 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       optional :share, type: Boolean
       optional :learned, type: Boolean
       optional :image, type: Hash do
-        requires :data, type: String
-        requires :filename, type: String
+        optional :data, type: String
+        optional :filename, type: String
       end
     end
     post '/edit', jbuilder: 'response_message' do
       authenticate!
       set_word
+      image = Paperclip.io_adapters.for(permitted_params[:image][:data])
+      image.original_filename = permitted_params[:image][:filename]
+      @user_word.image = image if image
+
       if @user_word.update(user_word_params)
         status :ok
         @message = 'Success'
@@ -103,6 +107,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       requires :name
     end
     delete '/delete', jbuilder: 'response_message' do
+      set_auth
       set_word
       if @user_word.destroy
         status :ok
