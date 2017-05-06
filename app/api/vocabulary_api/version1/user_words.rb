@@ -29,16 +29,22 @@ class VocabularyAPI::Version1::UserWords < Grape::API
       @user_word.word = @word
       @user_word.user = current_user
 
-      image = Paperclip.io_adapters.for(permitted_params[:image][:data])
-      image.original_filename = permitted_params[:image][:filename]
-      @user_word.image = image if image
+      if permitted_params[:image]
+        image = Paperclip.io_adapters.for(permitted_params[:image][:data])
+        image.original_filename = permitted_params[:image][:filename]
+        @user_word.image = image if image
+      end
 
-      if @user_word.save
-        status :ok
-        @message = 'Success'
+      if unique
+        if @user_word.save
+          status :ok
+          @message = "Success"
+        else
+          status :unprocessable_entity
+          @message = @user_word.errors
+        end
       else
-        status :unprocessable_entity
-        @message = @user_word.errors
+        @message = 'duplicated word'
       end
 
     end
@@ -215,6 +221,10 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     def set_auth
       authenticate!
       @user = current_user if current_user
+    end
+
+    def unique
+      !@user.user_words.exists?(word: Word.find_by(name: permitted_params[:name]))
     end
 
     def paginate(page, range, words)
