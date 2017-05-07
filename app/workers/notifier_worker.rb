@@ -7,7 +7,7 @@ class NotifierWorker
     # Do something
     User.all.each do |user|
       @user_words = UserWord.all.where(learned: false, user: user)
-      NotificationMailer.send_words(user, @user_words).deliver if @user_words
+      NotificationMailer.send_words(user, @user_words).deliver unless @user_words.empty?
     end
   end
 
