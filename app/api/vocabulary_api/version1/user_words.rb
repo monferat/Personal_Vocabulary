@@ -3,7 +3,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
   #/api/v1/words
   resources :words do
 
-    #/api/v1/words
+    #/api/v1/words/new
     desc 'Add new word to personal vocabulary'
     params do
       requires :name, type: String
@@ -19,7 +19,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
         optional :filename, type: String
       end
     end
-    post '', jbuilder: 'response_message' do
+    post '/new', jbuilder: 'response_message' do
       set_auth
 
       theme = Theme.find_by(name: permitted_params[:theme_name])
@@ -94,9 +94,12 @@ class VocabularyAPI::Version1::UserWords < Grape::API
     post '/edit', jbuilder: 'response_message' do
       authenticate!
       set_word
-      image = Paperclip.io_adapters.for(permitted_params[:image][:data])
-      image.original_filename = permitted_params[:image][:filename]
-      @user_word.image = image if image
+
+      if permitted_params[:image]
+        image = Paperclip.io_adapters.for(permitted_params[:image][:data])
+        image.original_filename = permitted_params[:image][:filename]
+        @user_word.image = image if image
+      end
 
       if @user_word.update(user_word_params)
         status :ok
