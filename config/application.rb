@@ -32,5 +32,7 @@ module Src
       env['api.tilt.root'] = Rails.root.join 'app', 'views', 'api'
     end
 
+    # sidekiq
+    config.active_job.queue_adapter = :sidekiq
   end
 end
