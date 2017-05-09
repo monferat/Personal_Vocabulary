@@ -24,6 +24,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
 
       theme = Theme.find_by(name: permitted_params[:theme_name])
       @word = Word.find_or_create_by(name: permitted_params[:name], theme: theme)
+      error!('Wrong theme!') unless @word.id
 
       @user_word = UserWord.new(user_word_params)
       @user_word.word = @word
