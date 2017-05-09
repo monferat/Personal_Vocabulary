@@ -1,10 +1,7 @@
-<h3>Store words</h3>
-<h3>in</h3>
-<h1>your personal vocabulary</h1>
+<h3>API for PERSONAL VOCABULARY</h3>
 
-<% if logged_in? %>
-  <%= link_to 'My profile', user_path(current_user) %>
-  <%= link_to 'Log out', logout_path, method: :delete %>
-<% else %>
-  <%= link_to 'Log in', login_path %> or <%= link_to 'Sign Up', signup_path %>
-<% end %>
+<a href="https://personal-vocabulary-beta.herokuapp.com/swagger">Link to swagger API</a>
+<br>
+<a href="https://personal-vocabulary-beta.herokuapp.com/sidekiq">Link to sidekiq backgroud work</a>
+<br>
+<a href="https://personal-vocabulary-beta.herokuapp.com/admin">Link to admin page</a>
