@@ -92,7 +92,7 @@ class VocabularyAPI::Version1::UserWords < Grape::API
         optional :filename, type: String
       end
     end
-    post '/edit', jbuilder: 'response_message' do
+    put '/edit', jbuilder: 'response_message' do
       authenticate!
       set_word
 
