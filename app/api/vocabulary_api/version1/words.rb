@@ -7,11 +7,15 @@ class VocabularyAPI::Version1::Words < Grape::API
     desc 'Show all shared words'
     params do
       optional :page, type: Integer
+      optional :range, type: Integer
     end
     get '/shared', jbuilder: 'all_words' do
       page = permitted_params[:page]
-      user_words = UserWord.all.where(share: true)
-      @user_words = page ? user_words[0..page] : user_words
+      words = UserWord.all.where(share: true)
+
+      range = 100 unless range
+      paginate(page, range, words)
+      # @user_words = page ? user_words[0..page] : user_words
     end
 
     #/api/v1/words/count/all
@@ -26,6 +30,13 @@ class VocabularyAPI::Version1::Words < Grape::API
       @message = UserWord.all.where(share: true).size.to_s
     end
 
+  end
+
+  private
+  helpers do
+    def paginate(page, range, words)
+      @user_words = page ? words[page*range-range..page*range] : words
+    end
   end
 
 end
